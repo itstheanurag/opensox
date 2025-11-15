@@ -1,6 +1,6 @@
 ---
 title: "Welcome to Opensox AI - Your Journey Begins"
-date: "2024-01-15"
+date: "2025-01-15"
 excerpt: "Introducing Opensox AI, the revolutionary platform that helps developers find the perfect open-source projects to contribute to in minutes."
 readTime: "3 min read"
 ---

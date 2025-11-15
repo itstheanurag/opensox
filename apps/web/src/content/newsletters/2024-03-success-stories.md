@@ -1,6 +1,6 @@
 ---
 title: "Community Success Stories: March Edition"
-date: "2024-03-05"
+date: "2025-11-08"
 excerpt: "Hear inspiring stories from developers who landed their dream jobs through open-source contributions made via Opensox AI."
 readTime: "5 min read"
 ---

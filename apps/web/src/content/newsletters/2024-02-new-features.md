@@ -1,6 +1,6 @@
 ---
 title: "opensox newsletter demo - full formatting test"
-date: "2024-02-10"
+date: "2025-06-10"
 excerpt: "a stress test markdown file to validate rendering, spacing, images, lists, code, tables, and odd content."
 readTime: "7 min read"
 ---

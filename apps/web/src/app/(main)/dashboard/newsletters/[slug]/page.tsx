@@ -4,10 +4,9 @@ import "@/styles/newsletter.css";
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { CalendarIcon, ClockIcon, ArrowLeftIcon, SparklesIcon, LockClosedIcon } from "@heroicons/react/24/outline";
+import { CalendarIcon, ClockIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSubscription } from "@/hooks/useSubscription";
-import PrimaryButton from "@/components/ui/custom-button";
 
 interface NewsletterData {
   title: string;
@@ -39,55 +38,17 @@ function NewsletterSkeleton() {
   );
 }
 
-function PremiumUpgradePrompt() {
-  const router = useRouter();
-
-  return (
-    <div className="w-full h-full flex items-center justify-center px-4">
-      <div className="max-w-2xl w-full bg-[#121214] border border-[#1a1a1d] rounded-2xl p-8 sm:p-12 text-center">
-        <div className="flex justify-center mb-6">
-          <div className="p-4 bg-gradient-to-br from-[#a472ea]/20 to-[#7150e7]/20 rounded-full">
-            <LockClosedIcon className="size-12 text-[#a472ea]" />
-          </div>
-        </div>
-        
-        <h1 className="text-3xl sm:text-4xl font-bold text-ox-white mb-4">
-          Premium Content
-        </h1>
-        
-        <p className="text-base sm:text-lg text-zinc-400 mb-8">
-          This newsletter is exclusively available for Opensox Premium members. Upgrade now to access all premium content.
-        </p>
-
-        <PrimaryButton 
-          onClick={() => router.push("/pricing")}
-          classname="w-full sm:w-auto px-8"
-        >
-          <SparklesIcon className="size-5" />
-          Upgrade to Premium
-        </PrimaryButton>
-
-        <button
-          onClick={() => router.push("/dashboard/newsletters")}
-          className="mt-6 text-ox-purple hover:text-purple-400 transition-colors text-sm"
-        >
-          ← Back to newsletters
-        </button>
-      </div>
-    </div>
-  );
-}
-
 export default function NewsletterPage() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
   const [newsletter, setNewsletter] = useState<NewsletterData | null>(null);
   const [loading, setLoading] = useState(true);
-  const { isPaidUser, isLoading: subscriptionLoading } = useSubscription();
+  const { isLoading: subscriptionLoading } = useSubscription();
 
   useEffect(() => {
-    if (!isPaidUser || subscriptionLoading) return;
+    // Fetch for all users (testing mode)
+    if (subscriptionLoading) return;
 
     fetch(`/api/newsletters/${slug}`)
       .then((res) => res.json())
@@ -103,7 +64,7 @@ export default function NewsletterPage() {
         setNewsletter(null);
         setLoading(false);
       });
-  }, [slug, isPaidUser, subscriptionLoading]);
+  }, [slug, subscriptionLoading]);
 
   if (subscriptionLoading) {
     return (
@@ -114,10 +75,6 @@ export default function NewsletterPage() {
         </div>
       </div>
     );
-  }
-
-  if (!isPaidUser) {
-    return <PremiumUpgradePrompt />;
   }
 
   if (loading) {
