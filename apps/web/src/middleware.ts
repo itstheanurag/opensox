@@ -11,18 +11,18 @@ export async function middleware(req: NextRequest) {
     req: adaptedReq as any,
     secret: process.env.NEXTAUTH_SECRET,
   });
-  
+
   const pathname = req.nextUrl.pathname;
-  
+
   const isProtectedRoute = PROTECTED_DASHBOARD_ROUTES.some((path) =>
     pathname.startsWith(path)
   );
-  
+
   if (isProtectedRoute && !token) {
     const signInUrl = new URL("/login", req.url);
     signInUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(signInUrl);
   }
-  
+
   return NextResponse.next();
 }
