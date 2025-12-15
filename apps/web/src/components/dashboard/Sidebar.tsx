@@ -11,6 +11,7 @@ import {
   HomeIcon,
   FolderIcon,
   ArrowRightOnRectangleIcon,
+  ArrowLeftOnRectangleIcon,
   SparklesIcon,
   StarIcon,
   DocumentTextIcon,
@@ -462,9 +463,11 @@ function ProfileMenu({ isCollapsed }: { isCollapsed: boolean }) {
           <div className="flex-1 flex items-center justify-between">
             <div className="flex flex-col">
               <span className="text-xs text-text-secondary font-semibold">
-                {firstName}
+                {isLoggedIn ? firstName : "Guest"}
               </span>
-              <span className="text-[10px] text-text-muted">{userEmail}</span>
+              <span className="text-[10px] text-text-muted">
+                {isLoggedIn ? userEmail : "Not signed in"}
+              </span>
             </div>
             <ChevronLeftIcon
               className={`size-4 text-text-muted transition-transform ${open ? "rotate-90" : "-rotate-90"}`}
@@ -489,9 +492,11 @@ function ProfileMenu({ isCollapsed }: { isCollapsed: boolean }) {
                 <ProfilePic imageUrl={userImage} />
                 <div className="flex flex-col">
                   <span className="text-sm text-text-primary font-semibold">
-                    {fullName}
+                    {isLoggedIn ? fullName : "Guest"}
                   </span>
-                  <span className="text-xs text-text-muted">{userEmail}</span>
+                  <span className="text-xs text-text-muted">
+                    {isLoggedIn ? userEmail : "Not signed in"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -510,20 +515,29 @@ function ProfileMenu({ isCollapsed }: { isCollapsed: boolean }) {
                   <span>Account Settings</span>
                 </button>
               )}
-              <button
-                onClick={() => {
-                  if (isLoggedIn) {
+              {isLoggedIn ? (
+                <button
+                  onClick={() => {
                     signOut({ callbackUrl: "/" });
-                  } else {
+                    setOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-sm text-text-secondary hover:bg-dash-hover transition-colors"
+                >
+                  <ArrowRightOnRectangleIcon className="size-4" />
+                  <span>Logout</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
                     router.push("/login");
-                  }
-                  setOpen(false);
-                }}
-                className="w-full flex items-center gap-3 px-3 py-2 text-sm text-text-secondary hover:bg-dash-surface transition-colors"
-              >
-                <ArrowRightOnRectangleIcon className="size-4" />
-                <span>{isLoggedIn ? "Logout" : "Login"}</span>
-              </button>
+                    setOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-sm text-text-secondary hover:bg-dash-hover transition-colors"
+                >
+                  <ArrowLeftOnRectangleIcon className="size-4" />
+                  <span>Login</span>
+                </button>
+              )}
             </div>
           </motion.div>
         )}
