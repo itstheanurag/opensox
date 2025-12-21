@@ -1,4 +1,5 @@
 // src/data/oss-programs/index.ts
+import { cache } from "react";
 import type { Program } from "./types";
 
 // Lazy program loaders - reduces initial bundle and parsing time
@@ -34,29 +35,40 @@ const programLoaders: Record<string, () => Promise<{ default?: Program } & Recor
   "fossasia-codeheat": () => import("./programs/fossasia-codeheat"),
 };
 
-// Cache for loaded programs
+// Cache for loaded programs (module-level cache for build-time)
 let programsCache: Program[] | null = null;
 let tagsCache: string[] | null = null;
 
-// Load all programs (for listing page - runs on server during SSG)
-async function loadAllPrograms(): Promise<Program[]> {
+// Internal implementation of loadAllPrograms
+async function loadAllProgramsImpl(): Promise<Program[]> {
   if (programsCache) return programsCache;
 
-  const programPromises = Object.entries(programLoaders).map(async ([slug, loader]) => {
-    const programModule = await loader();
-    // Handle both default export and named exports
-    const program = programModule.default || Object.values(programModule).find((exp): exp is Program =>
-      typeof exp === 'object' && exp !== null && 'slug' in exp
-    );
-    if (!program) {
-      throw new Error(`Program module for ${slug} has no valid export`);
-    }
-    return program;
-  });
+  try {
+    const programPromises = Object.entries(programLoaders).map(async ([slug, loader]) => {
+      const programModule = await loader();
+      // Handle both default export and named exports
+      const program = programModule.default || Object.values(programModule).find((exp): exp is Program =>
+        typeof exp === 'object' && exp !== null && 'slug' in exp
+      );
+      if (!program) {
+        throw new Error(`Program module for ${slug} has no valid export`);
+      }
+      return program;
+    });
 
-  programsCache = await Promise.all(programPromises);
-  return programsCache;
+    const programs = await Promise.all(programPromises);
+    programsCache = programs;
+    return programs;
+  } catch (error) {
+    // Clear cache on error to allow retry
+    programsCache = null;
+    throw error;
+  }
 }
+
+// Wrap with React cache() for request-scoped memoization
+// This prevents duplicate loads when called concurrently in Promise.all
+export const loadAllPrograms = cache(loadAllProgramsImpl);
 
 export function getAllPrograms(): Program[] {
   if (!programsCache) {
@@ -76,17 +88,25 @@ export async function getProgramBySlug(slug: string): Promise<Program | undefine
   return program;
 }
 
-export async function getAllTags(): Promise<string[]> {
+// Internal implementation of getAllTags
+async function getAllTagsImpl(): Promise<string[]> {
   if (tagsCache) return tagsCache;
 
-  const programs = await loadAllPrograms();
-  const set = new Set<string>();
-  for (const p of programs) {
-    for (const tag of p.tags) set.add(tag);
+  try {
+    const programs = await loadAllPrograms();
+    const set = new Set<string>();
+    for (const p of programs) {
+      for (const tag of p.tags) set.add(tag);
+    }
+    const tags = Array.from(set).sort();
+    tagsCache = tags;
+    return tags;
+  } catch (error) {
+    // Clear cache on error to allow retry
+    tagsCache = null;
+    throw error;
   }
-  tagsCache = Array.from(set).sort();
-  return tagsCache;
 }
 
-// Export for build-time loading
-export { loadAllPrograms };
+// Wrap with React cache() for request-scoped memoization
+export const getAllTags = cache(getAllTagsImpl);
