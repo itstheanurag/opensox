@@ -159,10 +159,11 @@ const Pricing = () => {
         dangerouslySetInnerHTML={{
           __html: `
           /* critical css for LCP element - inline for fastest rendering */
+          /* font-family matches Tailwind's font-mono class exactly to ensure consistent fallbacks */
           .lcp-feature-item { display: flex; flex-direction: column; gap: 1rem; width: 100%; flex: 1; }
           .lcp-feature-content { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; }
           .lcp-feature-header { display: flex; gap: 1rem; align-items: center; }
-          .lcp-feature-number { font-size: 3.75rem; font-family: var(--font-dm-mono), monospace; font-weight: 600; background: linear-gradient(to bottom, #a472ea, #341e7b); -webkit-background-clip: text; background-clip: text; color: transparent; }
+          .lcp-feature-number { font-size: 3.75rem; font-family: var(--font-dm-mono), Menlo, Monaco, "Courier New", monospace; font-weight: 600; background: linear-gradient(to bottom, #a472ea, #341e7b); -webkit-background-clip: text; background-clip: text; color: transparent; }
           .lcp-feature-title { font-size: 1.5rem; font-weight: 500; }
           .lcp-feature-description { font-weight: 500; }
         `,
