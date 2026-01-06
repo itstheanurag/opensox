@@ -369,13 +369,13 @@ const Pricing = () => {
             </div>
           </div>
           <TestimonialsSection />
-          <div className="border-b border-[#252525] text-center py-8 px-4">
+          <div className="border-b border-border text-center py-8 px-4">
             <p className="text-lg mb-4 text-text-secondary">
               <Link
                 href="/testimonials"
                 className="text-brand-purple-light hover:text-brand-purple transition-colors underline"
               >
-                See what my existing investors said about me.
+                See what our Pro customers said about us.
               </Link>
             </p>
           </div>
